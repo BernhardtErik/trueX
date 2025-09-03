@@ -51,3 +51,11 @@ After modifying the `.npmrc` file, you need to run `pnpm install` again to ensur
 ## License
 
 Licensed under the [MIT license](https://github.com/heroui-inc/next-app-template/blob/main/LICENSE).
+
+## Git
+
+This project is now a Git repository. Common commands:
+- git status — show changes
+- git add -A && git commit -m "message" — commit changes
+- git remote add origin <your-repo-url> — set remote
+- git push -u origin main — push the main branch
