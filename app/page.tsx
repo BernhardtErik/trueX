@@ -169,7 +169,10 @@ export default function Home() {
                     for (const [name, value] of Object.entries(fields)) {
                         setFieldValue(form, name, value);
                     }
-                    setIdNumber(String(patient.idNumber ?? ""));
+                    const newId = String(patient.idNumber ?? "");
+                    setIdNumber(newId);
+                    // update RSA dot status based on populated value
+                    window.dispatchEvent(new CustomEvent("rsa-id-change", { detail: newId }));
                     setDateOfBirth(toYYYYMMDD(patient.dateOfBirth));
                     form.dataset.patientId = String(patient.id);
                     setEditingId(String(patient.id));
@@ -182,6 +185,8 @@ export default function Home() {
                         delete form.dataset.patientId;
                     }
                     setIdNumber("");
+                    // reset RSA ID dot status to idle
+                    window.dispatchEvent(new CustomEvent("rsa-id-change", { detail: "" }));
                     setDateOfBirth("");
                     setEditingId("");
                     setFormOpen(true);
@@ -264,6 +269,8 @@ export default function Home() {
                         if (!existingId) {
                             form.reset();
                             setIdNumber("");
+                            // reset RSA ID dot status to idle
+                            window.dispatchEvent(new CustomEvent("rsa-id-change", { detail: "" }));
                             setDateOfBirth("");
                         }
                     } catch (err) {
@@ -282,11 +289,14 @@ export default function Home() {
                         <Input
                             label="RSA ID number"
                             name="idNumber"
+                            isRequired
                             placeholder="13-digit ID"
                             variant="bordered"
                             value={idNumber}
                             onValueChange={(val) => {
                                 setIdNumber(val);
+                                // Notify RSA ID dot indicator about changes
+                                window.dispatchEvent(new CustomEvent("rsa-id-change", { detail: val }));
                                 const valid = isValidSouthAfricanId(val);
                                 setIdValid(valid);
                                 if (valid) setDateOfBirth(parseDobFromRsaId(val) ?? "");
@@ -305,11 +315,11 @@ export default function Home() {
                         onValueChange={setDateOfBirth}
                     />
 
-                    <Input label="Address" name="address" placeholder="Street, City, Code" variant="bordered" />
+                    <Input label="Address" name="address" isRequired placeholder="Street, City, Code" variant="bordered" />
 
                     <div className="md:col-span-2">
                         <label className="text-sm font-medium text-foreground-600 block mb-1" htmlFor="medicalAid">Medical aid</label>
-                        <select id="medicalAid" name="medicalAid" className="w-full rounded-medium border border-default-300 bg-transparent px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary">
+                        <select id="medicalAid" name="medicalAid" required defaultValue="" className="w-full rounded-medium border border-default-300 bg-transparent px-3 py-2 text-foreground focus:outline-none focus:ring-2 focus:ring-primary">
                             <option value="" disabled>Select option</option>
                             {medicalAidOptions.map((opt) => (
                                 <option key={opt.key} value={opt.key}>{opt.label}</option>
@@ -357,6 +367,8 @@ export default function Home() {
                                             form.reset();
                                             delete form.dataset.patientId;
                                             setIdNumber("");
+                                            // reset RSA ID dot status to idle
+                                            window.dispatchEvent(new CustomEvent("rsa-id-change", { detail: "" }));
                                             setDateOfBirth("");
                                             setEditingId("");
                                             setFormOpen(false);
@@ -394,7 +406,7 @@ export default function Home() {
                             )}
                         </div>
                         <div className="flex gap-3">
-                            <Button type="reset" variant="flat" onClick={() => { const form = document.getElementById("patient-form") as HTMLFormElement | null; if (form) delete form.dataset.patientId; setIdNumber(""); setDateOfBirth(""); setEditingId(""); }}>Clear</Button>
+                            <Button type="reset" variant="flat" onClick={() => { const form = document.getElementById("patient-form") as HTMLFormElement | null; if (form) delete form.dataset.patientId; setIdNumber(""); window.dispatchEvent(new CustomEvent("rsa-id-change", { detail: "" })); setDateOfBirth(""); setEditingId(""); }}>Clear</Button>
                             {!editingId && (<Button color="primary" type="submit">Save</Button>)}
                         </div>
                     </div>
