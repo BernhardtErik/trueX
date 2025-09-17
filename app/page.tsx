@@ -2,6 +2,7 @@
 import React from "react";
 import { Input } from "@heroui/input";
 import { Button } from "@heroui/button";
+import Image from "next/image";
 
 import { RsaIdDot } from "../components/rsa-id-dot";
 import PatientSearch from "../components/patient-search";
@@ -63,8 +64,7 @@ export default function Home() {
     return (
         <section className="flex flex-col items-center py-8 md:py-12">
             <div className="flex items-center gap-3 mb-6">
-                <div className="size-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-lg">tX</div>
-                <h1 className="text-2xl md:text-3xl font-semibold">trueX Health</h1>
+                <Image src="/truex.jpeg" alt="trueX Health logo" width={100} height={100} className="size-25 rounded-full object-cover" />
             </div>
 
             <div className="w-full max-w-3xl mb-4 flex items-center justify-between gap-4">
